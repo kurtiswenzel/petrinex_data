@@ -1,0 +1,22 @@
+bundle:
+  name: petrinex-data
+
+sync:
+  exclude:
+    - data/
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    default: "shm"
+  schema:
+    default: "petrinex"
+
+targets:
+  dev:
+    default: true
+    mode: development
+    workspace:
+      profile: DEFAULT

@@ -1,0 +1,14 @@
+resources:
+  jobs:
+    setup_data:
+      name: "[${bundle.target}] Petrinex Data Setup"
+      tasks:
+        - task_key: "setup_data"
+          notebook_task:
+            notebook_path: ../setup_data.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+      permissions:
+        - level: CAN_VIEW
+          group_name: "users"
