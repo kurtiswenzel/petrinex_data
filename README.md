@@ -8,12 +8,9 @@ Real Alberta oil and gas production data sourced from [Petrinex Public Data](htt
 
 ### Option A: Run from browser
 
-1. Upload parquet to a UC Volume:
-   ```bash
-   databricks fs cp -r data/ dbfs:/Volumes/<catalog>/<schema>/dataset/parquet/ --overwrite
-   ```
-2. Import `setup_data.py` into your workspace
-3. Set `catalog` and `schema` widgets, attach to serverless or any cluster
+1. Import this repo into your Databricks workspace
+2. Open `setup_data`, set `catalog` and `schema` widgets
+3. Attach to serverless or any cluster
 4. **Run All** (~2 minutes)
 
 ### Option B: Bundle deploy

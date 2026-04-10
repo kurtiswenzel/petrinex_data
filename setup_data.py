@@ -2,13 +2,8 @@
 # MAGIC %md
 # MAGIC # Petrinex Data Setup
 # MAGIC
-# MAGIC Creates tables from pre-built parquet files in a UC Volume.
+# MAGIC Creates tables from pre-built parquet files.
 # MAGIC Source: [Petrinex Public Data](https://www.petrinex.ca/PD/Pages/default.aspx) (2024-2025).
-# MAGIC
-# MAGIC **Prerequisite:** Upload parquet to the volume first:
-# MAGIC ```
-# MAGIC databricks fs cp -r data/ dbfs:/Volumes/{catalog}/{schema}/dataset/parquet/ --overwrite
-# MAGIC ```
 # MAGIC
 # MAGIC | Table | Description |
 # MAGIC |-------|-------------|
@@ -66,9 +61,11 @@ except Exception as e:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 2. Create Tables from Parquet
+# MAGIC ## 2. Copy Parquet to Volume
 
 # COMMAND ----------
+
+import os, shutil
 
 tables = [
     "volumetrics", "ngl_volumes", "facilities", "operators",
@@ -76,6 +73,27 @@ tables = [
 ]
 
 vol_base = f"/Volumes/{catalog}/{schema}/dataset/parquet"
+notebook_path = dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+repo_data = "/Workspace" + os.path.dirname(notebook_path) + "/data"
+
+for table in tables:
+    src = os.path.join(repo_data, table)
+    dst = os.path.join(vol_base, table)
+    if not os.path.exists(src):
+        print(f"  SKIP {table}: {src} not found (parquet must already be in volume)")
+        continue
+    if os.path.exists(dst):
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst)
+    n = len([f for f in os.listdir(dst) if f.endswith(".parquet")])
+    print(f"  {table}: {n} file(s) -> {dst}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 3. Create Tables
+
+# COMMAND ----------
 
 for table in tables:
     spark.sql(f"""
