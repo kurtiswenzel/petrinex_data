@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/kurti/.ai-dev-kit/.venv/Scripts/**)",
+      "Read(//c/Users/kurti/.ai-dev-kit/repo/databricks-mcp-server/**)",
+      "Bash(DATABRICKS_CONFIG_PROFILE=databricks-free-kw \"C:/Users/kurti/.ai-dev-kit/.venv/Scripts/python.exe\" \"C:/Users/kurti/.ai-dev-kit/repo/databricks-mcp-server/run_server.py\" --help)",
+      "Bash(databricks auth *)",
+      "Bash(databricks current-user *)",
+      "Bash(\"C:/Users/kurti/.ai-dev-kit/.venv/Scripts/python.exe\" -m pip install --upgrade fastmcp)",
+      "Bash(\"C:/Users/kurti/.ai-dev-kit/.venv/Scripts/python.exe\" -c \"import sys; sys.path.insert\\(0, 'C:/Users/kurti/.ai-dev-kit/repo/databricks-mcp-server'\\); import run_server; print\\('IMPORT OK'\\)\")",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(\"C:/Users/kurti/.ai-dev-kit/.venv/Scripts/python.exe\" -c \"import json; d=json.load\\(open\\('C:/Users/kurti/.claude.json'\\)\\); print\\('top-level keys:', list\\(d.keys\\(\\)\\)\\); print\\('has mcpServers:', 'mcpServers' in d\\); print\\('mcpServers:', json.dumps\\(d.get\\('mcpServers', {}\\), indent=2\\)[:500]\\)\")",
+      "Bash(C:/Users/kurti/.ai-dev-kit/.venv/Scripts/python.exe -c ' *)"
+    ]
+  }
+}

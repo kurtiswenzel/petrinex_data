@@ -1,0 +1,11 @@
+resources:
+  apps:
+    ma_screener_app:
+      name: "petrinex-ma-screener"
+      description: "Interactive M&A deal screener for Alberta oil and gas assets"
+      source_code_path: ../app
+      resources:
+        - name: sql-warehouse
+          sql_warehouse:
+            id: 0b7f8d7a04d325b6
+            permission: CAN_USE

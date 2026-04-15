@@ -1,0 +1,276 @@
+{
+  "datasets": [
+    {
+      "name": "summary",
+      "displayName": "Summary KPIs",
+      "queryLines": [
+        "SELECT COUNT(*) AS wells_screened, ",
+        "       COUNT(DISTINCT operator_baid) AS operators_screened, ",
+        "       ROUND(AVG(deal_score), 1) AS avg_deal_score ",
+        "FROM shm.petrinex.gold_deal_screener"
+      ]
+    },
+    {
+      "name": "top_operators",
+      "displayName": "Top Acquisition Targets by Operator",
+      "queryLines": [
+        "SELECT operator_name, ",
+        "       ROUND(AVG(deal_score), 1) AS avg_score, ",
+        "       COUNT(*) AS well_count, ",
+        "       ROUND(SUM(recent_boe_per_day), 0) AS total_boe_per_day ",
+        "FROM shm.petrinex.gold_deal_screener ",
+        "WHERE operator_well_count < 100 ",
+        "GROUP BY operator_name ",
+        "HAVING COUNT(*) >= 3 ",
+        "ORDER BY avg_score DESC ",
+        "LIMIT 15"
+      ]
+    },
+    {
+      "name": "by_formation",
+      "displayName": "Deal Score by Formation",
+      "queryLines": [
+        "SELECT formation, ",
+        "       ROUND(AVG(deal_score), 1) AS avg_score, ",
+        "       COUNT(*) AS well_count, ",
+        "       ROUND(AVG(netback_cad_per_boe), 1) AS avg_netback ",
+        "FROM shm.petrinex.gold_deal_screener ",
+        "WHERE formation IS NOT NULL ",
+        "GROUP BY formation ",
+        "ORDER BY avg_score DESC ",
+        "LIMIT 12"
+      ]
+    },
+    {
+      "name": "top_wells",
+      "displayName": "Top 30 Ranked Wells",
+      "queryLines": [
+        "SELECT ROUND(deal_score, 1) AS deal_score, ",
+        "       operator_name, ",
+        "       operator_size_bucket, ",
+        "       formation, ",
+        "       region, ",
+        "       recent_boe_per_day, ",
+        "       ROUND(liquids_cut * 100, 0) AS liquids_pct, ",
+        "       ROUND(production_trend_pct * 100, 0) AS trend_pct, ",
+        "       ROUND(netback_cad_per_boe, 1) AS netback_cad_per_boe ",
+        "FROM shm.petrinex.gold_deal_screener ",
+        "ORDER BY deal_score DESC ",
+        "LIMIT 30"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "overview",
+      "displayName": "Deal Screener",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layout": [
+        {
+          "widget": {
+            "name": "title",
+            "multilineTextboxSpec": {
+              "lines": ["## Alberta Oil & Gas M&A Deal Screener"]
+            }
+          },
+          "position": {"x": 0, "y": 0, "width": 6, "height": 1}
+        },
+        {
+          "widget": {
+            "name": "subtitle",
+            "multilineTextboxSpec": {
+              "lines": ["Ranked acquisition targets from Petrinex 2024-2025 production data. Deal score = 35% liquids cut + 25% seller motivation + 20% production scale + 20% netback."]
+            }
+          },
+          "position": {"x": 0, "y": 1, "width": 6, "height": 1}
+        },
+        {
+          "widget": {
+            "name": "kpi-wells",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "summary",
+                "fields": [{"name": "wells_screened", "expression": "`wells_screened`"}],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "wells_screened",
+                  "displayName": "Wells Screened",
+                  "format": {"type": "number", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}
+                }
+              },
+              "frame": {"showTitle": true, "title": "Wells Screened"}
+            }
+          },
+          "position": {"x": 0, "y": 2, "width": 2, "height": 3}
+        },
+        {
+          "widget": {
+            "name": "kpi-operators",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "summary",
+                "fields": [{"name": "operators_screened", "expression": "`operators_screened`"}],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "operators_screened",
+                  "displayName": "Operators"
+                }
+              },
+              "frame": {"showTitle": true, "title": "Operators in Universe"}
+            }
+          },
+          "position": {"x": 2, "y": 2, "width": 2, "height": 3}
+        },
+        {
+          "widget": {
+            "name": "kpi-avg-score",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "summary",
+                "fields": [{"name": "avg_deal_score", "expression": "`avg_deal_score`"}],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg_deal_score",
+                  "displayName": "Avg Deal Score"
+                }
+              },
+              "frame": {"showTitle": true, "title": "Average Deal Score"}
+            }
+          },
+          "position": {"x": 4, "y": 2, "width": 2, "height": 3}
+        },
+        {
+          "widget": {
+            "name": "top-operators-chart",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "top_operators",
+                "fields": [
+                  {"name": "operator_name", "expression": "`operator_name`"},
+                  {"name": "avg_score", "expression": "`avg_score`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "avg_score",
+                  "scale": {"type": "quantitative"},
+                  "displayName": "Avg Deal Score"
+                },
+                "y": {
+                  "fieldName": "operator_name",
+                  "scale": {"type": "categorical", "sort": {"by": "x-reversed"}},
+                  "displayName": "Operator"
+                }
+              },
+              "frame": {"showTitle": true, "title": "Top 15 Distressed Operators (Small + Micro)"}
+            }
+          },
+          "position": {"x": 0, "y": 5, "width": 3, "height": 7}
+        },
+        {
+          "widget": {
+            "name": "by-formation-chart",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "by_formation",
+                "fields": [
+                  {"name": "formation", "expression": "`formation`"},
+                  {"name": "avg_score", "expression": "`avg_score`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "avg_score",
+                  "scale": {"type": "quantitative"},
+                  "displayName": "Avg Deal Score"
+                },
+                "y": {
+                  "fieldName": "formation",
+                  "scale": {"type": "categorical", "sort": {"by": "x-reversed"}},
+                  "displayName": "Formation"
+                }
+              },
+              "frame": {"showTitle": true, "title": "Best Formations by Avg Deal Score"}
+            }
+          },
+          "position": {"x": 3, "y": 5, "width": 3, "height": 7}
+        },
+        {
+          "widget": {
+            "name": "top-wells-table",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "top_wells",
+                "fields": [
+                  {"name": "deal_score", "expression": "`deal_score`"},
+                  {"name": "operator_name", "expression": "`operator_name`"},
+                  {"name": "operator_size_bucket", "expression": "`operator_size_bucket`"},
+                  {"name": "formation", "expression": "`formation`"},
+                  {"name": "region", "expression": "`region`"},
+                  {"name": "recent_boe_per_day", "expression": "`recent_boe_per_day`"},
+                  {"name": "liquids_pct", "expression": "`liquids_pct`"},
+                  {"name": "trend_pct", "expression": "`trend_pct`"},
+                  {"name": "netback_cad_per_boe", "expression": "`netback_cad_per_boe`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {"fieldName": "deal_score", "displayName": "Score"},
+                  {"fieldName": "operator_name", "displayName": "Operator"},
+                  {"fieldName": "operator_size_bucket", "displayName": "Size"},
+                  {"fieldName": "formation", "displayName": "Formation"},
+                  {"fieldName": "region", "displayName": "Region"},
+                  {"fieldName": "recent_boe_per_day", "displayName": "boe/day"},
+                  {"fieldName": "liquids_pct", "displayName": "Liquids %"},
+                  {"fieldName": "trend_pct", "displayName": "Trend %"},
+                  {"fieldName": "netback_cad_per_boe", "displayName": "Netback CAD/boe"}
+                ]
+              },
+              "frame": {"showTitle": true, "title": "Top 30 Acquisition Targets (Ranked by Deal Score)"}
+            }
+          },
+          "position": {"x": 0, "y": 12, "width": 6, "height": 8}
+        }
+      ]
+    }
+  ]
+}

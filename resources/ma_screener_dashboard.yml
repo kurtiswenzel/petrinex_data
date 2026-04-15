@@ -1,0 +1,9 @@
+resources:
+  dashboards:
+    ma_screener_dashboard:
+      display_name: "[${bundle.target}] Petrinex M&A Deal Screener"
+      file_path: ../dashboards/ma_screener.lvdash.json
+      warehouse_id: 0b7f8d7a04d325b6
+      permissions:
+        - level: CAN_READ
+          group_name: "users"

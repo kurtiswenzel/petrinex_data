@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "resources": [
+    {
+      "type": "genie_space",
+      "name": "Petrinex M&A Deal Screener",
+      "id": "01f1390bc24d1c8486fae7013fc1a25d",
+      "created_at": "2026-04-15T20:43:30.389121+00:00",
+      "updated_at": "2026-04-15T20:43:30.389121+00:00"
+    },
+    {
+      "type": "dashboard",
+      "name": "Petrinex M&A Deal Screener",
+      "id": "01f1390c1f7c1322ab547a2f9ae2fd12",
+      "created_at": "2026-04-15T20:46:06.244581+00:00",
+      "updated_at": "2026-04-15T20:46:06.244581+00:00",
+      "url": "https://dbc-f9439112-5585.cloud.databricks.com/sql/dashboardsv3/01f1390c1f7c1322ab547a2f9ae2fd12"
+    }
+  ]
+}

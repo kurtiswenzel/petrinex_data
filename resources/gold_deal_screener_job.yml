@@ -1,0 +1,15 @@
+resources:
+  jobs:
+    gold_deal_screener:
+      name: "[${bundle.target}] Petrinex Gold -- Deal Screener"
+      description: "Builds shm.petrinex.gold_deal_screener from silver tables."
+      tasks:
+        - task_key: "build_gold_deal_screener"
+          notebook_task:
+            notebook_path: ../setup_gold.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+      permissions:
+        - level: CAN_VIEW
+          group_name: "users"

@@ -19,4 +19,4 @@ targets:
     default: true
     mode: development
     workspace:
-      profile: DEFAULT
+      profile: databricks-free-kw
